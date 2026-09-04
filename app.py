@@ -1028,3 +1028,4 @@ $$ P_r \propto \frac{P_t}{d^n} $$
 dB形式路径损耗：
 $$ L_p(\text{dB})=10n\log_{10}(d) + C $$
 > dB数值
+"""
