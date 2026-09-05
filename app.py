@@ -5,69 +5,83 @@ from scipy.integrate import trapezoid as trapz
 
 # -------------------------- 页面全局配置（只保留一次） --------------------------
 st.set_page_config(page_title="通信原理交互式教学", layout="wide")
-# ====================== Matplotlib 中文字体配置 ======================
+# ====================== Matplotlib 中文字体 ======================
+# Streamlit Cloud：优先使用系统中文字体；本地 Windows 也可正常运行。
 import os
 import glob
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
-# 搜索系统中可以直接被 Matplotlib 使用的中文 TTF 字体
-font_candidates = [
-    # Linux / Streamlit Cloud
-    "/usr/share/fonts/truetype/arphic/ukai.ttc",
-    "/usr/share/fonts/truetype/arphic/uming.ttc",
+# 这些是常见的 Linux / Windows 中文字体位置。
+# fonts-noto-cjk 由 packages.txt 安装后，通常会出现在 /usr/share/fonts 下。
+_font_paths = [
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf",
+    "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
-
-    # Windows 本地
     "C:/Windows/Fonts/msyh.ttc",
+    "C:/Windows/Fonts/msyh.ttf",
     "C:/Windows/Fonts/simhei.ttf",
-    "C:/Windows/Fonts/simsun.ttc",
 ]
 
-# 再搜索系统所有字体
-system_fonts = font_manager.findSystemFonts(
-    fontpaths=None,
-    fontext="ttf"
-)
+# 再从系统字体目录中搜索 Noto / 中文字体。
+_search_dirs = [
+    "/usr/share/fonts",
+    "/usr/local/share/fonts",
+    os.path.expanduser("~/.fonts"),
+]
+for _directory in _search_dirs:
+    if os.path.isdir(_directory):
+        _font_paths.extend(glob.glob(os.path.join(_directory, "**", "*.ttf"), recursive=True))
+        _font_paths.extend(glob.glob(os.path.join(_directory, "**", "*.otf"), recursive=True))
 
-font_candidates.extend(system_fonts)
+# 本地 Windows 再补充系统字体。
+if os.path.isdir("C:/Windows/Fonts"):
+    _font_paths.extend(glob.glob("C:/Windows/Fonts/*.ttf"))
+    _font_paths.extend(glob.glob("C:/Windows/Fonts/*.otf"))
+
+# 去重并优先中文字体。
+_font_paths = list(dict.fromkeys(_font_paths))
+_font_paths.sort(key=lambda p: (
+    0 if any(k in os.path.basename(p).lower() for k in ["noto", "cjk", "wqy", "ukai", "uming", "yahei", "simhei", "simsun"]) else 1,
+    p.lower()
+))
 
 CHINESE_FONT_PATH = None
+CHINESE_FONT_NAME = None
 
-for path in font_candidates:
-    if os.path.exists(path):
-        try:
-            # 尝试读取字体
-            prop = font_manager.FontProperties(fname=path)
-            font_name = prop.get_name()
+# 检查字体是否真的包含常用中文字符“中”“国”“信”“号”。
+for _path in _font_paths:
+    if not os.path.isfile(_path):
+        continue
+    try:
+        _font = font_manager.get_font(_path)
+        _charmap = _font.get_charmap()
+        if all(ord(_char) in _charmap for _char in ["中", "国", "信", "号"]):
+            CHINESE_FONT_PATH = _path
+            CHINESE_FONT_NAME = font_manager.FontProperties(fname=_path).get_name()
+            break
+    except Exception:
+        continue
 
-            # 排除明显不支持中文的字体
-            if font_name:
-                CHINESE_FONT_PATH = path
-                CHINESE_FONT_NAME = font_name
-                break
-
-        except Exception:
-            continue
-
-# 如果找到了字体，就注册并使用
-if CHINESE_FONT_PATH:
+if CHINESE_FONT_PATH and CHINESE_FONT_NAME:
+    # 注册实际字体文件，避免 Matplotlib 回退到 default。
     try:
         font_manager.fontManager.addfont(CHINESE_FONT_PATH)
-        plt.rcParams["font.family"] = CHINESE_FONT_NAME
-        plt.rcParams["font.sans-serif"] = [CHINESE_FONT_NAME]
     except Exception:
         pass
+    plt.rcParams["font.family"] = [CHINESE_FONT_NAME]
+    plt.rcParams["font.sans-serif"] = [CHINESE_FONT_NAME]
+else:
+    # 找不到中文字体时至少不要静默；本地环境可继续使用这些常见字体。
+    plt.rcParams["font.family"] = ["Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"]
 
-# 防止负号显示成方框
 plt.rcParams["axes.unicode_minus"] = False
-
-# 图表字体大小
 plt.rcParams["axes.titlesize"] = 14
 plt.rcParams["axes.labelsize"] = 13
 plt.rcParams["xtick.labelsize"] = 11
 plt.rcParams["ytick.labelsize"] = 11
-
 
 # Plotly 使用浏览器字体；页面 CSS 同时指定 Noto Sans CJK，
 # 让 Plotly 标题、坐标轴和 Streamlit 页面文字也优先使用中文字体。
