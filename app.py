@@ -1,19 +1,16 @@
-import streamlit as st
-import numpy as np
-import plotly.graph_objects as go
-from scipy.integrate import trapezoid as trapz
-
-# -------------------------- 页面全局配置（只保留一次） --------------------------
-st.set_page_config(page_title="通信原理交互式教学", layout="wide")
-
-# 全局字体放大配置，兼容windows+linux
+import matplotlib
+matplotlib.use('Agg')  # Streamlit云端必须，防止matplotlib无显示器报错
 import matplotlib.pyplot as plt
-plt.rcParams["font.sans-serif"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
-plt.rcParams["axes.unicode_minus"] = False
+
+# 字体优先级：优先Linux可用中文字体，找不到就切英文，避免方框
+plt.rcParams["font.sans-serif"] = ["WenQuanYi Micro Hei", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False # 解决负号变成方框
+
 plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['axes.labelsize'] = 13
 plt.rcParams['xtick.labelsize'] = 11
 plt.rcParams['ytick.labelsize'] = 11
+
 
 st.markdown("""
 <style>
