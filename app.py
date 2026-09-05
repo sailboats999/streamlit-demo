@@ -15,7 +15,6 @@ from matplotlib import font_manager
 # 使用项目内置字体，不依赖云端 Linux 是否安装中文字体。
 FONT_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "fonts",
     "NotoSansCJK-Regular.ttc"
 )
 
