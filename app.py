@@ -5,52 +5,69 @@ from scipy.integrate import trapezoid as trapz
 
 # -------------------------- 页面全局配置（只保留一次） --------------------------
 st.set_page_config(page_title="通信原理交互式教学", layout="wide")
-
-# ====================== 中文字体配置：本地 + GitHub/云端通用 ======================
+# ====================== Matplotlib 中文字体配置 ======================
 import os
+import glob
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
-# 字体文件放在 GitHub 项目的 fonts 文件夹中。
-# 使用项目内置字体，不依赖云端 Linux 是否安装中文字体。
-# ====================== 中文字体 ======================
-# ====================== Matplotlib 中文字体 ======================
-import subprocess
-import matplotlib.pyplot as plt
-from matplotlib import font_manager
+# 搜索系统中可以直接被 Matplotlib 使用的中文 TTF 字体
+font_candidates = [
+    # Linux / Streamlit Cloud
+    "/usr/share/fonts/truetype/arphic/ukai.ttc",
+    "/usr/share/fonts/truetype/arphic/uming.ttc",
+    "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
 
-try:
-    # 从 Linux 系统字体中自动寻找支持中文的字体
-    result = subprocess.run(
-        ["fc-match", ":lang=zh", "-f", "%{family}"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
+    # Windows 本地
+    "C:/Windows/Fonts/msyh.ttc",
+    "C:/Windows/Fonts/simhei.ttf",
+    "C:/Windows/Fonts/simsun.ttc",
+]
 
-    chinese_font = result.stdout.strip().split(",")[0].strip()
+# 再搜索系统所有字体
+system_fonts = font_manager.findSystemFonts(
+    fontpaths=None,
+    fontext="ttf"
+)
 
-    if chinese_font:
-        plt.rcParams["font.family"] = chinese_font
-    else:
-        plt.rcParams["font.sans-serif"] = ["Noto Sans CJK JP"]
+font_candidates.extend(system_fonts)
 
-except Exception:
-    # 本地 Windows / 其他环境备用
-    plt.rcParams["font.sans-serif"] = [
-        "Microsoft YaHei",
-        "SimHei",
-        "Noto Sans CJK JP",
-        "DejaVu Sans"
-    ]
+CHINESE_FONT_PATH = None
 
+for path in font_candidates:
+    if os.path.exists(path):
+        try:
+            # 尝试读取字体
+            prop = font_manager.FontProperties(fname=path)
+            font_name = prop.get_name()
+
+            # 排除明显不支持中文的字体
+            if font_name:
+                CHINESE_FONT_PATH = path
+                CHINESE_FONT_NAME = font_name
+                break
+
+        except Exception:
+            continue
+
+# 如果找到了字体，就注册并使用
+if CHINESE_FONT_PATH:
+    try:
+        font_manager.fontManager.addfont(CHINESE_FONT_PATH)
+        plt.rcParams["font.family"] = CHINESE_FONT_NAME
+        plt.rcParams["font.sans-serif"] = [CHINESE_FONT_NAME]
+    except Exception:
+        pass
+
+# 防止负号显示成方框
 plt.rcParams["axes.unicode_minus"] = False
 
-plt.rcParams["axes.unicode_minus"] = False
-plt.rcParams['axes.titlesize'] = 14
-plt.rcParams['axes.labelsize'] = 13
-plt.rcParams['xtick.labelsize'] = 11
-plt.rcParams['ytick.labelsize'] = 11
+# 图表字体大小
+plt.rcParams["axes.titlesize"] = 14
+plt.rcParams["axes.labelsize"] = 13
+plt.rcParams["xtick.labelsize"] = 11
+plt.rcParams["ytick.labelsize"] = 11
+
 
 # Plotly 使用浏览器字体；页面 CSS 同时指定 Noto Sans CJK，
 # 让 Plotly 标题、坐标轴和 Streamlit 页面文字也优先使用中文字体。
