@@ -1267,10 +1267,14 @@ elif module_sel == "2.3 衰减、时延与多径":
   - 城市地面移动通信：$n=3\sim4$，衰减更快
 
 功率关系：
-$$ P_r \propto \frac{P_t}{d^n} $$
+$$
+P_r \propto \frac{P_t}{d^n} 
+$$
 
 dB形式路径损耗：
-$$ L_p(\text{dB})=10n\log_{10}(d) + C $$
+$$
+L_p(\text{dB})=10n\log_{10}(d) + C 
+$$
 > dB数值越大，代表损耗越大，收到信号越弱。
 """)
         col_c, col_f = st.columns([1,2])
