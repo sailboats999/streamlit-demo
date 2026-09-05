@@ -1,11 +1,6 @@
-import matplotlib
-matplotlib.use('Agg')  # Streamlit云端必须，防止matplotlib无显示器报错
 import matplotlib.pyplot as plt
-
-# 字体优先级：优先Linux可用中文字体，找不到就切英文，避免方框
-plt.rcParams["font.sans-serif"] = ["WenQuanYi Micro Hei", "DejaVu Sans"]
-plt.rcParams["axes.unicode_minus"] = False # 解决负号变成方框
-
+plt.rcParams["font.sans-serif"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
+plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['axes.labelsize'] = 13
 plt.rcParams['xtick.labelsize'] = 11
