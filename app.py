@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import streamlit as st
+import numpy as np
 plt.rcParams["font.sans-serif"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams['axes.titlesize'] = 14
