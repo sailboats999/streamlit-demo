@@ -13,20 +13,15 @@ from matplotlib import font_manager
 
 # 字体文件放在 GitHub 项目的 fonts 文件夹中。
 # 使用项目内置字体，不依赖云端 Linux 是否安装中文字体。
-FONT_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "NotoSansCJK-Regular.ttc"
-)
-
-if os.path.exists(FONT_PATH):
-    font_manager.fontManager.addfont(FONT_PATH)
-    CHINESE_FONT = font_manager.FontProperties(fname=FONT_PATH).get_name()
-    plt.rcParams["font.family"] = CHINESE_FONT
-else:
-    # 备用：如果字体文件没有上传，尝试系统中文字体
-    plt.rcParams["font.sans-serif"] = [
-        "Noto Sans CJK SC", "Microsoft YaHei", "SimHei", "WenQuanYi Micro Hei", "DejaVu Sans"
-    ]
+# ====================== 中文字体 ======================
+plt.rcParams["font.sans-serif"] = [
+    "Noto Sans CJK SC",
+    "Noto Sans CJK",
+    "Microsoft YaHei",
+    "SimHei",
+    "DejaVu Sans"
+]
+plt.rcParams["axes.unicode_minus"] = False
 
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams['axes.titlesize'] = 14
