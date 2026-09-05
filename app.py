@@ -273,6 +273,7 @@ if chapter_sel == "第2章 信号与信道" and module_sel == "2.1 时域与频�
 
             fig_proj_3d.update_layout(
                 title=dict(text="傅里叶分量三维 + 侧面投影示意", x=0.5),
+                font=dict(family="WenQuanYi Micro Hei", size=12),
                 scene=dict(
                     xaxis_title="时间 t",
                     yaxis_title="角频率 ω",
