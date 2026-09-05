@@ -1,13 +1,19 @@
-import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
+import plotly.graph_objects as go
+from scipy.integrate import trapezoid as trapz
+
+# -------------------------- 页面全局配置（只保留一次） --------------------------
+st.set_page_config(page_title="通信原理交互式教学", layout="wide")
+
+# 全局字体放大配置，兼容windows+linux
+import matplotlib.pyplot as plt
 plt.rcParams["font.sans-serif"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['axes.labelsize'] = 13
 plt.rcParams['xtick.labelsize'] = 11
 plt.rcParams['ytick.labelsize'] = 11
-
 
 st.markdown("""
 <style>
@@ -267,7 +273,6 @@ if chapter_sel == "第2章 信号与信道" and module_sel == "2.1 时域与频�
 
             fig_proj_3d.update_layout(
                 title=dict(text="傅里叶分量三维 + 侧面投影示意", x=0.5),
-                font=dict(family="WenQuanYi Micro Hei", size=12),
                 scene=dict(
                     xaxis_title="时间 t",
                     yaxis_title="角频率 ω",
