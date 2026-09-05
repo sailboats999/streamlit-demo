@@ -14,13 +14,36 @@ from matplotlib import font_manager
 # 字体文件放在 GitHub 项目的 fonts 文件夹中。
 # 使用项目内置字体，不依赖云端 Linux 是否安装中文字体。
 # ====================== 中文字体 ======================
-plt.rcParams["font.sans-serif"] = [
-    "Noto Sans CJK SC",
-    "Noto Sans CJK",
-    "Microsoft YaHei",
-    "SimHei",
-    "DejaVu Sans"
-]
+# ====================== Matplotlib 中文字体 ======================
+import subprocess
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+
+try:
+    # 从 Linux 系统字体中自动寻找支持中文的字体
+    result = subprocess.run(
+        ["fc-match", ":lang=zh", "-f", "%{family}"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    chinese_font = result.stdout.strip().split(",")[0].strip()
+
+    if chinese_font:
+        plt.rcParams["font.family"] = chinese_font
+    else:
+        plt.rcParams["font.sans-serif"] = ["Noto Sans CJK JP"]
+
+except Exception:
+    # 本地 Windows / 其他环境备用
+    plt.rcParams["font.sans-serif"] = [
+        "Microsoft YaHei",
+        "SimHei",
+        "Noto Sans CJK JP",
+        "DejaVu Sans"
+    ]
+
 plt.rcParams["axes.unicode_minus"] = False
 
 plt.rcParams["axes.unicode_minus"] = False
