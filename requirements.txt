@@ -3,4 +3,3 @@ plotly
 numpy
 scipy
 matplotlib
-fonts-wqy-microhei
