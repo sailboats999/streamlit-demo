@@ -1389,7 +1389,7 @@ $$ r(t)=\sum_{i} a_i \cdot s(t-\tau_i) + n(t) $$
 
     with tab_doppler:
         st.subheader("💨什么是多普勒频移")
-        st.markdown("""
+        st.markdown(r"""
 **多普勒频移：**发射端和接收端存在相对运动，接收信号载波频率发生偏移。
 
 物理现象：车向你开过来声音变尖，远离声音变低沉，无线通信同理。
