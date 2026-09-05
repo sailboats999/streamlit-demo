@@ -6,17 +6,52 @@ from scipy.integrate import trapezoid as trapz
 # -------------------------- 页面全局配置（只保留一次） --------------------------
 st.set_page_config(page_title="通信原理交互式教学", layout="wide")
 
-# 全局字体放大配置，兼容windows+linux
+# ====================== 中文字体配置：本地 + GitHub/云端通用 ======================
+import os
 import matplotlib.pyplot as plt
-plt.rcParams["font.sans-serif"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
+from matplotlib import font_manager
+
+# 字体文件放在 GitHub 项目的 fonts 文件夹中。
+# 使用项目内置字体，不依赖云端 Linux 是否安装中文字体。
+FONT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "fonts",
+    "NotoSansCJK-Regular.ttc"
+)
+
+if os.path.exists(FONT_PATH):
+    font_manager.fontManager.addfont(FONT_PATH)
+    CHINESE_FONT = font_manager.FontProperties(fname=FONT_PATH).get_name()
+    plt.rcParams["font.family"] = CHINESE_FONT
+else:
+    # 备用：如果字体文件没有上传，尝试系统中文字体
+    plt.rcParams["font.sans-serif"] = [
+        "Noto Sans CJK SC", "Microsoft YaHei", "SimHei", "WenQuanYi Micro Hei", "DejaVu Sans"
+    ]
+
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['axes.labelsize'] = 13
 plt.rcParams['xtick.labelsize'] = 11
 plt.rcParams['ytick.labelsize'] = 11
 
+# Plotly 使用浏览器字体；页面 CSS 同时指定 Noto Sans CJK，
+# 让 Plotly 标题、坐标轴和 Streamlit 页面文字也优先使用中文字体。
+PLOTLY_FONT = "Noto Sans CJK SC, Noto Sans SC, Microsoft YaHei, Arial, sans-serif"
+
 st.markdown("""
 <style>
+/* 中文字体：优先使用云端可用的 Noto Sans CJK；浏览器端负责 Plotly 和 Streamlit 文字 */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
+
+html, body, [class*="css"],
+div[data-testid="stAppViewContainer"],
+div[data-testid="stMarkdownContainer"],
+button, input, textarea, select, label,
+h1, h2, h3, h4, h5, h6, p, span {
+    font-family: "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", Arial, sans-serif !important;
+}
+
 div.markdown-text-container p {font-size:16px !important;}
 h1 {font-size:24px !important;}
 h2 {font-size:20px !important;}
