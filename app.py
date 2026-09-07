@@ -8,6 +8,7 @@ st.set_page_config(page_title="通信原理交互式教学", layout="wide")
 # ====================== Matplotlib 中文字体 ======================
 # Streamlit Cloud：优先使用系统中文字体；本地 Windows 也可正常运行。
 import os
+from pathlib import Path
 import glob
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
@@ -195,6 +196,23 @@ if chapter_sel == "第2章 信号与信道" and module_sel == "2.1 时域与频�
     # ========== 分支A：傅里叶级数与傅里叶变换 ==========
     if demo_mode == "fourier":
         st.title("📚 傅里叶级数与傅里叶变换 交互式教学")
+        st.markdown("---")
+
+        # ===================== 🎬 傅里叶变换动画教学视频 =====================
+        st.subheader("🎬 傅里叶变换动画教学")
+        video_path = Path(__file__).resolve().parent / "FourierTransformLesson.mp4"
+
+        if video_path.exists():
+            st.video(str(video_path))
+        else:
+            st.warning(
+                "视频文件不存在。请把 FourierTransformLesson.mp4 "
+                "放到 app.py 同一文件夹（GitHub 项目根目录）。"
+            )
+
+        st.markdown(
+            "> 🎥 建议先观看动画，再使用下面的交互式图形进行理解。"
+        )
         st.markdown("---")
 
         # ===================== 1. 信号时域表示 =====================
